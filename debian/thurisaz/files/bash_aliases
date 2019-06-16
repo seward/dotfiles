@@ -1,0 +1,26 @@
+## Toggle touchscreen
+alias touchscreen-on="xinput enable \"ELAN2933:00 04F3:2933\""
+alias touchscreen-off="xinput disable \"ELAN2933:00 04F3:2933\""
+
+## Toggle xrandr screen settings
+alias redshift-off="xrandr --output eDP-1 --gamma .9:.9:.9"
+alias redshift="xrandr --output eDP-1 --gamma .7:.5:.4"
+
+## Safety First!
+alias rm="rm -i"
+alias cp="cp -i"
+alias mv="mv -i"
+
+# typos
+alias l='ls -G'
+alias s='ls -G'
+alias clera='clear'
+alias claer='clear'
+alias clar='clear'
+
+# some more ls aliases
+alias ll='ls -alF'
+alias la='ls -A'
+
+# fuck dash
+alias sh='bash'

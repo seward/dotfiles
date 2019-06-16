@@ -1,0 +1,106 @@
+#! /bin/bash
+
+##############################################################################
+####  For histories & logs
+
+function hist() { grep "$@" $HOME/.bash_eternal_history | tail -10; }
+function histall() { grep "$@" $HOME/.bash_eternal_history; }
+
+function log() { echo $(date "+%Y-%m-%d %H:%M:%S") - "$@" >> $HOME/.log; }
+function slog() { grep "$@" $HOME/.log | tail -10; }
+function slogall() { grep "$@" $HOME/.log; }
+
+##############################################################################
+####  Misc functions
+
+timer(){
+  if [[ -n $1 ]]; then
+    sleep $1
+    if [[ -n $2 ]]; then
+      xmessage -nearmouse $2
+    else
+      xmessage -nearmouse "Counted off $1"
+    fi
+  else
+    echo "  timer: Enter a time to wait and an optional alert message, like
+    timer 20s
+  to wait 20 seconds, or
+    timer 5m 'Check eggs'
+
+timer() is just a wrapper for sleep. From the sleep man page:
+Pause for NUMBER seconds. SUFFIX may be 's' for seconds (the default), 'm' for minutes, 'h' for hours or 'd' for days.
+Unlike most implementations that require NUMBER be an integer, here NUMBER may be an arbitrary floating point number.
+Given two or more arguments, pause for the amount of time specified by the sum of their values."
+  fi
+}
+
+##############################################################################
+####  For setting the names of my terminal tabs and windows
+
+termtn(){
+  # Set the terminal tab name
+  printf "\e]1;$1\a"
+}
+
+termwn(){
+  # Set the terminal window name
+  printf "\e]2;$1\a"
+}
+
+##############################################################################
+####  Functions for editing/maintaining documents and notes.
+
+complete_docs(){
+  local cur docs
+  cur="${COMP_WORDS[COMP_CWORD]}"
+  docs=$(cd $DOCPATH; ls -- "$2"* 2>/dev/null)
+  COMPREPLY=( $(compgen -W "${docs}" -- ${cur}) )
+  return 0
+}
+
+open_file_to_edit(){
+  if [[ -n $1 ]]; then
+    $EDITOR "$DOCPATH/$1"
+  else
+    $EDITOR "$DOCPATH/"
+  fi
+}
+alias ne="open_file_to_edit"
+alias nt="open_file_to_edit todo.md"
+alias nn="open_file_to_edit notes.md"
+alias nel="ls $DOCPATH/"
+complete -F complete_docs open_file_to_edit
+complete -F complete_docs ne
+
+cat_file(){
+  if [[ -n $1 ]]; then
+    cat "$DOCPATH/$1"
+  else
+    echo "No file provided, like 'nec <filename>'"
+  fi
+}
+alias nec="cat_file"
+complete -F complete_docs cat_file
+complete -F complete_docs nec
+
+delete_file(){
+  if [[ -n $1 ]]; then
+    rm -i -- "$DOCPATH/$1"
+  else
+    echo "No file provided, like 'ned <filename>'"
+  fi
+}
+alias ned='delete_file'
+complete -F complete_docs delete_file
+complete -F complete_docs ned
+
+##############################################################################
+####  For lazily converting between encodings
+
+convert_to_utf8(){
+  iconv -c -f $1 -t UTF-8 -- "$2"
+}
+
+utf8_to_utf16le(){
+  ( printf "\xff\xfe" ; iconv -c -f UTF-8 -t UTF-16LE -- "$1" ) > "${1}utf-16le"
+}

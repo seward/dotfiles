@@ -1,0 +1,7 @@
+#! /bin/bash
+
+export EDITOR=/usr/bin/vim
+export PATH=$PATH:$HOME/bin
+#export WORKSPACE=
+export GITPATH=$HOME/git/
+export DOCPATH=$HOME/documents/
